@@ -1,0 +1,62 @@
+<article class="show-card">
+  <div class="poster-wrap">
+    <a
+      class="poster-link"
+      [routerLink]="['/show', show().id]"
+      [attr.aria-label]="'Voir la fiche de ' + show().name"
+    >
+      @if (show().image && !imageFailed()) {
+        <img
+          [src]="show().image!.medium"
+          [alt]="'Affiche de ' + show().name"
+          loading="eager"
+          width="210"
+          height="295"
+          (error)="imageFailed.set(true)"
+        />
+      } @else {
+        <div class="poster-placeholder">
+          <span>Affiche indisponible</span>
+        </div>
+      }
+    </a>
+    @if (show().rating.average !== null) {
+      <span class="rating">
+        <span aria-hidden="true">★</span>
+        {{ show().rating.average }}
+      </span>
+    }
+    <button
+      class="favorite-button"
+      type="button"
+      [class.selected]="favorites.has(show().id)"
+      [attr.aria-pressed]="favorites.has(show().id)"
+      [attr.aria-label]="
+        (favorites.has(show().id) ? 'Retirer des favoris : ' : 'Ajouter aux favoris : ') +
+        show().name
+      "
+      (click)="favorites.toggle(show())"
+    >
+      <span aria-hidden="true">{{ favorites.has(show().id) ? '♥' : '♡' }}</span>
+    </button>
+  </div>
+  <div class="card-info">
+    <p class="card-meta">
+      {{ show().premiered ? show().premiered!.slice(0, 4) : 'Date inconnue' }}
+      <span>•</span>
+      {{ show().genres[0] || 'Série TV' }}
+    </p>
+    <h3>
+      <a [routerLink]="['/show', show().id]">{{ show().name }}</a>
+    </h3>
+    <p class="card-status">
+      {{
+        show().status === 'Running'
+          ? 'En cours'
+          : show().status === 'Ended'
+            ? 'Terminée'
+            : show().status
+      }}
+    </p>
+  </div>
+</article>

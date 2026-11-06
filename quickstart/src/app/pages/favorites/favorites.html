@@ -1,0 +1,31 @@
+<section class="page-intro">
+  <h1>Favoris</h1>
+  <p>Retrouvez les séries que vous avez enregistrées.</p>
+</section>
+<section aria-labelledby="favorites-heading" [attr.aria-busy]="state().loading">
+  <div class="section-heading">
+    <h2 id="favorites-heading">Mes favoris</h2>
+    <span class="result-count">
+      {{ favorites.count() }} série{{ favorites.count() > 1 ? 's' : '' }}
+    </span>
+  </div>
+  @if (state().loading) {
+    <p class="loading" role="status">loading...</p>
+  }
+  @if (state().error) {
+    <p class="notice" role="status">{{ state().error }}</p>
+  }
+  @if (!state().loading) {
+    <div class="show-grid">
+      @for (show of state().data; track show.id) {
+        <app-show-card [show]="show" />
+      } @empty {
+        <div class="empty-state">
+          <h3>Votre collection commence ici.</h3>
+          <p>Cliquez sur le cœur d’une série pour l’ajouter à vos favoris.</p>
+          <a class="button primary" routerLink="/">Rechercher des séries</a>
+        </div>
+      }
+    </div>
+  }
+</section>

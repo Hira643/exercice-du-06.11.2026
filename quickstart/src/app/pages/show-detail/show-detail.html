@@ -1,0 +1,116 @@
+<a class="back-link" routerLink="/">← Retour à l’exploration</a>
+@if (state().loading) {
+  <p class="loading" role="status">loading...</p>
+}
+@if (state().error) {
+  <div class="empty-state" role="alert">
+    <h1>Erreur de chargement</h1>
+    <p>{{ state().error }}</p>
+    <a class="button primary" routerLink="/">Revenir à la recherche</a>
+  </div>
+}
+@if (state().data; as show) {
+  <section class="detail-layout">
+    <div class="detail-poster">
+      @if (show.image && !imageFailed()) {
+        <img
+          [src]="show.image.original"
+          [alt]="'Affiche de ' + show.name"
+          width="680"
+          height="1000"
+          (error)="imageFailed.set(true)"
+        />
+      } @else {
+        <div class="poster-placeholder">
+          <span>Affiche indisponible</span>
+        </div>
+      }
+    </div>
+    <div class="detail-info">
+      <h1>{{ show.name }}</h1>
+      <div class="detail-tags">
+        @for (genre of show.genres; track genre) {
+          <span>{{ genre }}</span>
+        }
+        @if (show.rating.average !== null) {
+          <span class="score">★ {{ show.rating.average }} / 10</span>
+        }
+      </div>
+      <dl class="facts">
+        <div>
+          <dt>Statut</dt>
+          <dd>
+            {{
+              show.status === 'Running'
+                ? 'En cours'
+                : show.status === 'Ended'
+                  ? 'Terminée'
+                  : show.status
+            }}
+          </dd>
+        </div>
+        <div>
+          <dt>Première diffusion</dt>
+          <dd>{{ show.premiered || 'Non renseignée' }}</dd>
+        </div>
+        <div>
+          <dt>Langue</dt>
+          <dd>{{ show.language || 'Non renseignée' }}</dd>
+        </div>
+      </dl>
+      <h2>Résumé</h2>
+      @if (show.summary) {
+        <div class="summary" [innerHTML]="show.summary"></div>
+      } @else {
+        <p class="summary">Aucun résumé disponible pour cette série.</p>
+      }
+      <button
+        class="button"
+        [class.primary]="!favorites.has(show.id)"
+        [class.secondary]="favorites.has(show.id)"
+        [attr.aria-pressed]="favorites.has(show.id)"
+        (click)="favorites.toggle(show)"
+      >
+        {{ favorites.has(show.id) ? '♥ Retirer des favoris' : '♡ Ajouter aux favoris' }}
+      </button>
+    </div>
+  </section>
+  <section class="episodes-section" aria-labelledby="episodes-heading">
+    <div class="section-heading">
+      <div>
+        <h2 id="episodes-heading">
+          Les épisodes
+          <span class="result-count">{{ episodes().length }}</span>
+        </h2>
+      </div>
+      <div class="season-filter">
+        <label for="season">Saison</label>
+        <select
+          id="season"
+          [value]="selectedSeason()"
+          (change)="selectedSeason.set($any($event.target).value)"
+        >
+          <option value="all">Toutes les saisons</option>
+          @for (season of seasons(); track season) {
+            <option [value]="season">Saison {{ season }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <ul class="episode-list">
+      @for (episode of visibleEpisodes(); track episode.id) {
+        <li>
+          <span class="episode-number">
+            S{{ episode.season.toString().padStart(2, '0') }} ·
+            {{
+              episode.number === null ? 'SPÉCIAL' : 'E' + episode.number.toString().padStart(2, '0')
+            }}
+          </span>
+          <h3>{{ episode.name }}</h3>
+        </li>
+      } @empty {
+        <li class="empty-state">Aucun épisode disponible.</li>
+      }
+    </ul>
+  </section>
+}

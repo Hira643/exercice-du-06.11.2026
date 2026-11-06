@@ -1,0 +1,65 @@
+<section class="hero">
+  <h1>TVmaze Explorer</h1>
+  <p>Recherchez une série pour consulter sa fiche et ses épisodes.</p>
+  <form class="search-form" (ngSubmit)="search()" role="search">
+    <label for="show-search">Nom de la série :</label>
+    <input
+      id="show-search"
+      name="query"
+      [(ngModel)]="query"
+      placeholder="Rechercher une série…"
+      autocomplete="off"
+      maxlength="150"
+    />
+    <button class="button primary" type="submit">Rechercher</button>
+  </form>
+  <div class="suggestions">
+    <span>Une idée ?</span>
+    @for (suggestion of ['Sherlock', 'Breaking Bad', 'The Office', 'Dark']; track suggestion) {
+      <button type="button" (click)="search(suggestion)">{{ suggestion }}</button>
+    }
+  </div>
+</section>
+
+<section class="results" aria-labelledby="results-heading" [attr.aria-busy]="state().loading">
+  <div class="section-heading">
+    <div>
+      <h2 id="results-heading">
+        {{ submittedQuery ? 'Résultats pour « ' + submittedQuery + ' »' : 'À vous de jouer' }}
+      </h2>
+    </div>
+    @if (!state().loading && !state().error) {
+      <span class="result-count">
+        {{ state().data.length }} série{{ state().data.length > 1 ? 's' : '' }}
+      </span>
+    }
+  </div>
+  @if (state().loading) {
+    <p class="loading" role="status">loading...</p>
+  } @else if (state().error) {
+    <div class="empty-state" role="alert">
+      <h3>Erreur de chargement</h3>
+      <p>{{ state().error }}</p>
+      <button class="button secondary" (click)="retry()">Réessayer</button>
+    </div>
+  } @else {
+    <div class="show-grid">
+      @for (show of state().data; track show.id) {
+        <app-show-card [show]="show" />
+      } @empty {
+        <div class="empty-state">
+          <h3>
+            {{ submittedQuery ? 'Aucune série trouvée.' : 'Le début d’une nouvelle histoire.' }}
+          </h3>
+          <p>
+            {{
+              submittedQuery
+                ? 'Essayez un autre titre ou une orthographe différente.'
+                : 'Saisissez le nom d’une série pour commencer votre exploration.'
+            }}
+          </p>
+        </div>
+      }
+    </div>
+  }
+</section>

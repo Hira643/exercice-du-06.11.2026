@@ -1,0 +1,8 @@
+{
+  "name": "exercice-clement",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../tools/serve.cjs"
+  }
+}

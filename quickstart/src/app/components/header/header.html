@@ -1,0 +1,38 @@
+<header class="header">
+  <nav class="container navigation" aria-label="Navigation principale">
+    <a class="brand" routerLink="/" aria-label="TvMaze : accueil">TvMaze</a>
+    <div class="nav-links">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
+      >
+        Accueil
+      </a>
+      <a routerLink="/favorites" routerLinkActive="active" ariaCurrentWhenActive="page">
+        Favoris
+        <span class="count">({{ favorites.count() }})</span>
+      </a>
+    </div>
+    <button
+      class="access-toggle"
+      type="button"
+      role="switch"
+      [attr.aria-checked]="access.adultMode()"
+      (click)="toggleAccess()"
+    >
+      Mode adulte : {{ access.adultMode() ? 'activé' : 'désactivé' }}
+    </button>
+  </nav>
+</header>
+@if (access.message()) {
+  <div class="container">
+    <p class="notice" role="alert">{{ access.message() }}</p>
+  </div>
+}
+@if (favorites.storageWarning()) {
+  <div class="container">
+    <p class="notice" role="status">{{ favorites.storageWarning() }}</p>
+  </div>
+}

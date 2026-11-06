@@ -1,0 +1,14 @@
+{
+  "name": "exercices-html-css",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node tools/serve.cjs",
+    "start:angular": "npm --prefix quickstart start",
+    "build:angular": "npm --prefix quickstart run build",
+    "test:angular": "npm --prefix quickstart test -- --watch=false"
+  },
+  "engines": {
+    "node": ">=22.22.3"
+  }
+}
